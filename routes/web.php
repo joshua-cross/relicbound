@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RelicEffectController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -15,5 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+Route::get('vote', function () {
+    return Inertia::render('vote');
+})->name('vote');
+Route::get('vote', [RelicEffectController::class, 'random'])->name('vote');
 
 require __DIR__.'/settings.php';

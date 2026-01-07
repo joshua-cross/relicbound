@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RelicEffectResource;
 use App\RelicEffect;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RelicEffectController extends Controller
 {
@@ -44,5 +46,12 @@ class RelicEffectController extends Controller
         $relicEffect->delete();
 
         return response()->json();
+    }
+
+    public function random()
+    {
+        return Inertia::render('vote', [
+            'relicEffect' => new RelicEffectResource(RelicEffect::inRandomOrder()->first()),
+        ]);
     }
 }
