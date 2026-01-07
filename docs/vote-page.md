@@ -22,6 +22,10 @@ Contains the title and the details of the relic effect.
 Where Question 1 of 10 is currently shown, we will eventually want to show the Nightlord and the hero for this current question
 for the current MVP we are just doing generic questions.
 
+The cards should be vertically stacked, showing a maximum of 3 progressively getting smaller.
+
+The mobile design should be largely the same as the desktop design, just scaled down to fit the smaller screen.
+
 ## Buttons
 
 Per the link above, as well as swiping left or right we also want a heart and an X button to register a vote.
