@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // call RelicEffectSeeder
+        $this->call(RelicEffectSeeder::class);
+
         User::firstOrCreate(
             ['email' => 'test@example.com'],
             [
