@@ -15,6 +15,8 @@ See: https://dribbble.com/shots/11629611-Cards-Swipe-Questionnaire as an example
 
 We want a dark mode version of this, without questions.
 
+---
+
 ## Card
 
 Contains the title and the details of the relic effect.
@@ -25,6 +27,8 @@ for the current MVP we are just doing generic questions.
 The cards should be vertically stacked, showing a maximum of 3 progressively getting smaller.
 
 The mobile design should be largely the same as the desktop design, just scaled down to fit the smaller screen.
+
+---
 
 ## Buttons
 

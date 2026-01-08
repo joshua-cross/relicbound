@@ -11,8 +11,16 @@ export default function vote({
 }: Props) {
     return (
         <>
-            <pre>{ JSON.stringify(relicEffect) }</pre>
-            <VoteCard relicEffect={relicEffect} />
+            <div className="container">
+                <div className="flex justify-center">
+                    <VoteCard
+                        relicEffect={relicEffect}
+                        handleSwipe={() => {
+                            // TODO: implement swipe, bring forward next card and move the stack along
+                        }}
+                    />
+                </div>
+            </div>
         </>
     )
 };

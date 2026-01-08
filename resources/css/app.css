@@ -16,10 +16,10 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 
-    --color-background: var(--background);
+    --color-background: #121621;
     --color-foreground: var(--foreground);
 
-    --color-card: var(--card);
+    --color-card: #1E2533;
     --color-card-foreground: var(--card-foreground);
 
     --color-popover: var(--popover);
@@ -40,7 +40,7 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
-    --color-border: var(--border);
+    --color-border: #A3A6AD;
     --color-input: var(--input);
     --color-ring: var(--ring);
 
