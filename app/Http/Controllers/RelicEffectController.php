@@ -50,8 +50,10 @@ class RelicEffectController extends Controller
 
     public function random()
     {
+        $relicEffects = RelicEffect::inRandomOrder()->limit(10)->get();
+
         return Inertia::render('vote', [
-            'relicEffect' => new RelicEffectResource(RelicEffect::inRandomOrder()->first()),
+            'relicEffects' => RelicEffectResource::collection($relicEffects),
         ]);
     }
 }

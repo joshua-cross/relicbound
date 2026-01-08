@@ -1,26 +1,17 @@
-import VoteCard from "@/components/vote-card";
+import VoteCardStack from '@/components/vote-card-stack';
 
 interface Props {
-    relicEffect: {
-        data: RelicEffect
+    relicEffects: {
+        data: RelicEffect[]
     },
 }
 
 export default function vote({
-    relicEffect: { data: relicEffect }
+    relicEffects: { data: relicEffects }
 }: Props) {
     return (
         <>
-            <div className="container">
-                <div className="flex justify-center">
-                    <VoteCard
-                        relicEffect={relicEffect}
-                        handleSwipe={() => {
-                            // TODO: implement swipe, bring forward next card and move the stack along
-                        }}
-                    />
-                </div>
-            </div>
+            <VoteCardStack relicEffects={relicEffects} />
         </>
     )
 };

@@ -2,8 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import Card from './ui/card';
 import { clsx } from 'clsx';
+import { Direction } from '@/components/vote-card-stack';
 
-type Direction = 'left' | 'right';
 type Transform = {
     x: number;
     y: number;
