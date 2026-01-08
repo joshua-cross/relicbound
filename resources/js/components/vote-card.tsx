@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import Card from './ui/card';
+import { clsx } from 'clsx';
 
 type Direction = 'left' | 'right';
 type Transform = {
@@ -8,6 +9,7 @@ type Transform = {
     y: number;
     rot: number;
     scale: number;
+    transition: string;
 };
 
 interface Props {
@@ -18,9 +20,10 @@ interface Props {
 // I don't foresee these changing at all
 const maxRotation = 3;
 const maxTranslateX = 165;
-const maxTranslateY = 25;
+const maxTranslateY = 50;
 const touchScale = 1.07;
 const allowedSwipeDirections = ['left', 'right'];
+const fadeOutDuration = 200; // animation duration before next card in stack is shown..
 
 export default function VoteCard({
     relicEffect: { name, details },
@@ -31,19 +34,27 @@ export default function VoteCard({
         y: 0,
         rot: 0,
         scale: 1,
+        transition: 'transform 350ms cubic-bezier(0.22,0.8,0.36,1)',
     });
-    const [transition, setTransition] = useState<string>(
-        'transform 350ms cubic-bezier(0.22,0.8,0.36,1)',
-    );
     const [swipeHandled, setSwipeHandled] = useState(false);
+
+    const onHandleSwipe = useCallback((direction: Direction) => {
+        if (!swipeHandled) {
+            setSwipeHandled(true);
+
+            setTimeout(() => {
+                handleSwipe(direction);
+            }, fadeOutDuration);
+        }
+    }, [handleSwipe, swipeHandled]);
 
     const handlers = useSwipeable({
         onTouchStartOrOnMouseDown: () => {
             if (!swipeHandled) {
-                setTransition('');
                 setTransform((prev) => ({
                     ...prev,
                     scale: touchScale,
+                    transition: "",
                 }));
             }
         },
@@ -71,25 +82,24 @@ export default function VoteCard({
                             Math.min(maxRotation, clampedX / 8),
                         ), // rotation logic
                         scale: prev.scale,
+                        transition: exceedsThreshold ? 'transform 300ms ease-out' : prev.transition,
                     }) as Transform,
             );
 
             // if raw delta exceeds threshold, trigger handler once
             if (exceedsThreshold && allowedSwipeDirections.includes(dir)) {
-                setSwipeHandled(true);
-                setTransition('transform 300ms ease-out');
-                handleSwipe(dir as Direction);
+                onHandleSwipe(dir as Direction);
             }
         },
         onSwiped: () => {
             if (swipeHandled) return;
             // animate back if threshold not reached
-            setTransition('transform 450ms cubic-bezier(0.22,0.8,0.36,1)');
             setTransform({
                 x: 0,
                 y: 0,
                 rot: 0,
                 scale: 1.0,
+                transition: 'transform 300ms cubic-bezier(0.22,0.8,0.36,1)',
             } as Transform);
         },
         trackTouch: true,
@@ -97,22 +107,28 @@ export default function VoteCard({
     });
 
     const transformStyle = useMemo(() => {
-        const { x, y, rot, scale } = transform;
+        const { x, y, rot, scale, transition } = transform;
         return {
             transform: `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`,
-            transition,
+            transition: `${transition}, 200ms linear opacity`,
             willChange: 'transform',
         };
-    }, [transform, transition]);
+    }, [transform]);
+
+    const wrapperClasses = useMemo(() => clsx([
+        "w-full",
+        "max-w-120",
+        swipeHandled && "opacity-0",
+        swipeHandled && "transition-opacity",
+        swipeHandled && `duration-${fadeOutDuration}`,
+    ]), [swipeHandled]);
 
     return (
-        <div className="w-full max-w-120">
-            <div {...handlers} style={transformStyle}>
-                <Card>
-                    <h1>{name}</h1>
-                    <p>{details}</p>
-                </Card>
-            </div>
+        <div {...handlers} style={transformStyle} className={wrapperClasses}>
+            <Card>
+                <h1>{name}</h1>
+                <p>{details}</p>
+            </Card>
         </div>
     );
 }
