@@ -17,7 +17,7 @@ class RelicEffect extends Model
     ];
 
     /**
-     * Get 10 random RelicEffects
+     * Get relic effects sorted by the order field, defined hourly by the relic_effects:order command.
      *
      * TODO: We will need to filter out relic effects that the user has already voted on.
      *
@@ -26,8 +26,8 @@ class RelicEffect extends Model
      * @return \LaravelIdea\Helper\App\_IH_RelicEffect_QB
      */
     #[Scope]
-    protected function randomBatch(Builder $query, int $count = 10)
+    protected function randomStack(Builder $query)
     {
-        return $query->inRandomOrder()->limit($count);
+        return $query->orderBy('order');
     }
 }

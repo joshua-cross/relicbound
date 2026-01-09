@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RelicEffectResource;
 use App\RelicEffect;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class RelicEffectController extends Controller
@@ -48,17 +48,23 @@ class RelicEffectController extends Controller
         return response()->json();
     }
 
-    public function randomBatch()
+    public function stack(Request $request)
     {
-        return RelicEffectResource::collection(RelicEffect::randomBatch(10)->get());
+        $request->validate([
+            'cursor' => ['nullable', 'string'],
+        ]);
+
+        return RelicEffect::randomStack()->cursorPaginate(10);
     }
 
     public function random(Request $request)
     {
-        $relicEffects = RelicEffect::randomBatch(10)->get();
+        $seed = Session::remember('seed', fn() => rand(0, PHP_INT_MAX));
+
+        $relicEffects = RelicEffect::randomStack()->cursorPaginate(10);
 
         return Inertia::render('vote', [
-            'relicEffects' => RelicEffectResource::collection($relicEffects),
+            'data' => $relicEffects,
         ]);
     }
 }

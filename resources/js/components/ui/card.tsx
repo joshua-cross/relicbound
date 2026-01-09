@@ -9,7 +9,7 @@ export default function card({ children, level }: Props) {
         <div
             style={{ zIndex: level ?? 1 }}
             className="card h-96 w-full p-6 flex items-end bg-card border-border
-            border rounded-xl shadow-xl cursor-grab active:cursor-grabbing"
+            border rounded-xl shadow-xl"
         >
             <div className="content">
                 { children }

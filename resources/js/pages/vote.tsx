@@ -1,17 +1,13 @@
 import VoteCardStack from '@/components/vote-card-stack';
 
 interface Props {
-    relicEffects: {
-        data: RelicEffect[]
-    },
+    data: StackResponse;
 }
 
-export default function vote({
-    relicEffects: { data: relicEffects }
-}: Props) {
+export default function vote({ data }: Props) {
     return (
         <>
-            <VoteCardStack relicEffects={relicEffects} />
+            <VoteCardStack {...data} />
         </>
-    )
-};
+    );
+}

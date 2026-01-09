@@ -1,8 +1,8 @@
+import { Direction } from '@/components/vote-card-stack';
+import { clsx } from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import Card from './ui/card';
-import { clsx } from 'clsx';
-import { Direction } from '@/components/vote-card-stack';
 
 type Transform = {
     x: number;
@@ -15,6 +15,7 @@ type Transform = {
 interface Props {
     relicEffect: RelicEffect;
     handleSwipe: (direction: Direction) => void;
+    idx: number;
 }
 
 // I don't foresee these changing at all
@@ -28,6 +29,7 @@ const fadeOutDuration = 200; // animation duration before next card in stack is 
 export default function VoteCard({
     relicEffect: { name, details },
     handleSwipe,
+    idx,
 }: Props) {
     const [transform, setTransform] = useState<Transform>({
         x: 0,
@@ -38,28 +40,33 @@ export default function VoteCard({
     });
     const [swipeHandled, setSwipeHandled] = useState(false);
 
-    const onHandleSwipe = useCallback((direction: Direction) => {
-        if (!swipeHandled) {
-            setSwipeHandled(true);
+    const active = useMemo(() => idx === 0, [idx]);
 
-            setTimeout(() => {
-                handleSwipe(direction);
-            }, fadeOutDuration);
-        }
-    }, [handleSwipe, swipeHandled]);
+    const onHandleSwipe = useCallback(
+        (direction: Direction) => {
+            if (!swipeHandled) {
+                setSwipeHandled(true);
+
+                setTimeout(() => {
+                    handleSwipe(direction);
+                }, fadeOutDuration);
+            }
+        },
+        [handleSwipe, swipeHandled],
+    );
 
     const handlers = useSwipeable({
         onTouchStartOrOnMouseDown: () => {
-            if (!swipeHandled) {
+            if (!swipeHandled && active) {
                 setTransform((prev) => ({
                     ...prev,
                     scale: touchScale,
-                    transition: "",
+                    transition: '',
                 }));
             }
         },
         onSwiping: ({ deltaY, deltaX, dir: initialDir }) => {
-            if (swipeHandled) return; // can only swipe once per card..
+            if (swipeHandled || !active) return; // can only swipe once per card..
             const dir = initialDir.toLowerCase();
 
             // clamp so card follows only up to ±maxTranslate
@@ -82,7 +89,9 @@ export default function VoteCard({
                             Math.min(maxRotation, clampedX / 8),
                         ), // rotation logic
                         scale: prev.scale,
-                        transition: exceedsThreshold ? 'transform 300ms ease-out' : prev.transition,
+                        transition: exceedsThreshold
+                            ? 'transform 300ms ease-out'
+                            : prev.transition,
                     }) as Transform,
             );
 
@@ -109,25 +118,40 @@ export default function VoteCard({
     const transformStyle = useMemo(() => {
         const { x, y, rot, scale, transition } = transform;
         return {
-            transform: `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`,
+            transform: active
+                ? `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`
+                : `translate3d(0px, ${-350 * idx}px, 0) rotate(0deg) scaleX(${1 - idx / 10})`,
             transition: `${transition}, 200ms linear opacity`,
             willChange: 'transform',
+            zIndex: active ? 10 : 10 - idx,
         };
     }, [transform]);
 
-    const wrapperClasses = useMemo(() => clsx([
-        "w-full",
-        "max-w-120",
-        swipeHandled && "opacity-0",
-        swipeHandled && "transition-opacity",
-        swipeHandled && `duration-${fadeOutDuration}`,
-    ]), [swipeHandled]);
+    const wrapperClasses = useMemo(
+        () =>
+            clsx([
+                'w-full',
+                'max-w-120',
+                'position-relative',
+                swipeHandled && 'opacity-0',
+                swipeHandled && 'transition-opacity',
+                swipeHandled && `duration-${fadeOutDuration}`,
+                active && 'cursor-grab',
+                active && 'active:cursor-grabbing',
+                active && 'z-10',
+            ]),
+        [swipeHandled],
+    );
 
     return (
         <div {...handlers} style={transformStyle} className={wrapperClasses}>
             <Card>
-                <h1>{name}</h1>
-                <p>{details}</p>
+                {active && (
+                    <>
+                        <h1 className={'select-none'}>{name}</h1>
+                        <p className={'select-none'}>{details}</p>
+                    </>
+                )}
             </Card>
         </div>
     );

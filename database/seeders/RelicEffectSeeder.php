@@ -30,10 +30,12 @@ class RelicEffectSeeder extends Seeder
         // open the CSV file and convert its contentts into an array.
         if (($handle = fopen($csvPath, "r")) !== FALSE) {
             $header = fgetcsv($handle, 1000, ",");
+            $idx = 0;
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $row = array_combine($header, $data);
                 $name = $row['Relic Description'];
                 $details = $row['Effect'];
+                $idx = $idx + 1;
 
                 if (empty($name) || empty($details)) {
                     continue; // skip incomplete rows
@@ -42,6 +44,7 @@ class RelicEffectSeeder extends Seeder
                 $rows[] = [
                     'name' => $row['Relic Description'],
                     'details' => $row['Effect'],
+                    'order' => $idx,
                     ...$defaultData,
                 ];
             }
