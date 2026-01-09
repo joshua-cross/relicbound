@@ -48,9 +48,14 @@ class RelicEffectController extends Controller
         return response()->json();
     }
 
-    public function random()
+    public function randomBatch()
     {
-        $relicEffects = RelicEffect::inRandomOrder()->limit(10)->get();
+        return RelicEffectResource::collection(RelicEffect::randomBatch(10)->get());
+    }
+
+    public function random(Request $request)
+    {
+        $relicEffects = RelicEffect::randomBatch(10)->get();
 
         return Inertia::render('vote', [
             'relicEffects' => RelicEffectResource::collection($relicEffects),
